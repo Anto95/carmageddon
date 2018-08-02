@@ -38,7 +38,8 @@
 import RPi.GPIO as GPIO, sys, threading, time, os, subprocess
 import math
 
-
+#use physical pin numbering
+GPIO.setmode(GPIO.BOARD)
 #======================================================================
 # General Functions
 #
@@ -49,129 +50,121 @@ import math
 class WheelEncoder():
     def __init__(self):
         self.radius = 55
-        self.circum = radius * math.pi
+        self.circum = self.radius * math.pi
         self.ticks = 0
         self.startTime = time.time()
         self.lastTime = self.startTime
+        self.elapsedTime = 0.0
+        self.distance = 0.0
+        self.acceleration = 0.0
         self.totalDistance = 0.0
+        self.speed = 0.0
 
-    def updateRevolutions():
-        self.revoultions = int(self.ticks/36)
+    def updateRevolutions(self):
+        self.revolutions = int(self.ticks/36)
         self.ticks = 0
 
-    def updateElapsedTime():
+    def updateElapsedTime(self):
         thisTime = time.time()
-        self.elapsedTime = self.lastTime - thisTime
+        self.elapsedTime = thisTime - self.lastTime
         self.lastTime = thisTime
 
-    def updateDistance():
+    def updateDistance(self):
         self.distance = self.circum * self.revolutions
         self.totalDistance += self.distance
 
-    def updateSpeed(speed):
+    def updateSpeed(self,speed):
         self.speed = speed
 
-    def getSpeed():
+    def getSpeed(self):
         speed = self.distance/self.elapsedTime
         return speed
 
-    def updateAcceleration():
-        updateRevolutions()
-        updateElapsedTime()
-        updateDistance()
-        currentSpeed = getSpeed()
-        self.acceleration = (self.speed-currentSpeed)
-        updateSpeed(currentSpeed)
-
-    def getState(ticks):
+    def updateAcceleration(self):
+        self.updateRevolutions()
+        self.updateElapsedTime()
+        self.updateDistance()
+        currentSpeed = self.getSpeed()
+        self.acceleration = (currentSpeed-self.speed)/self.elapsedTime
+        self.updateSpeed(currentSpeed)
+    
+    def updateState(self,ticks):
         self.ticks = ticks
-        updateRevolutions()
-        updateElapsedTime()
-        updateDistance()
-        updateAcceleration()
-        state = {"elapsedTime":self.elapsedTime, "distance":self.distance, "totalDistance": self.totalDistance, "speed": self.speed, "acceleration":self.acceleration}
-        return state
+        self.updateAcceleration()
+        return self.getState()
+    
+    def getState(self):
+        self.state = {"elapsedTime":self.elapsedTime, "distance (m)":self.distance/100, "totalDistance (m)": self.totalDistance/100, "speed (m/s)": self.speed/100, "acceleration (m/s^2)":self.acceleration/100}
+        return self.state
 
 class Initio():
-    def init():
-
+    def init(self):
         #Pins
         # Pins 24, 26 Right Motor
         # Pins 19, 21 Left Motor
-        R1 = 11
-        R2 = 12
-        L1 = 13
-        L2 = 15
+        self.R1 = 11
+        self.R2 = 12
+        self.L1 = 13
+        self.L2 = 15
 
         #Pins Wheel encoder
-        ENCODER1 = 16 #Wheel Encoder right
-        ENCODER2 = 19 #Wheel Encoder left
+        self.ENCODER1 = 16 #Wheel Encoder right
+        self.ENCODER2 = 19 #Wheel Encoder left
 
 
         #Setup wheel encoder
-        self.tickSR = 0
+        self.ticksR = 0
         self.ticksL = 0
-        GPIO.setup(ENCODER1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        GPIO.setup(ENCODER2, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        wheelEncoderR = WheelEncoder()
-        wheelEncoderL = WheelEncoder()
+        GPIO.setup(self.ENCODER1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        GPIO.setup(self.ENCODER2, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        self.wheelEncoderR = WheelEncoder()
+        self.wheelEncoderL = WheelEncoder()
 
         #Setup
         GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(R1, GPIO.OUT)
-        GPIO.setup(R2, GPIO.OUT)
-        GPIO.setup(L1, GPIO.OUT)
-        GPIO.setup(L2, GPIO.OUT)
+        GPIO.setup(self.R1, GPIO.OUT)
+        GPIO.setup(self.R2, GPIO.OUT)
+        GPIO.setup(self.L1, GPIO.OUT)
+        GPIO.setup(self.L2, GPIO.OUT)
 
 
         #Setup PWM
-        leftF = GPIO.PWM(IN1,50)
-        leftB = GPIO.PWM(IN2,50)
-        rightF = GPIO.PWM(IN3,50)
-        rightB = GPIO.PWM(IN4,50)
-        global p, q, a, b
+        self.leftF = GPIO.PWM(self.R1,50)
+        self.leftB = GPIO.PWM(self.R2,50)
+        self.ightF = GPIO.PWM(self.L1,50)
+        self.rightB = GPIO.PWM(self.L2,50)
         # Initialise the PWM device using the default address
 
-        #use physical pin numbering
-        GPIO.setmode(GPIO.BOARD)
-        #print GPIO.RPI_REVISION
-
-        #set up digital line detectors as inputs
-        GPIO.setup(lineRight, GPIO.IN) # Right line sensor
-        GPIO.setup(lineLeft, GPIO.IN) # Left line sensor
-
-        #Set up IR obstacle sensors as inputs
-        GPIO.setup(irFL, GPIO.IN) # Left obstacle sensor
-        GPIO.setup(irFR, GPIO.IN) # Right obstacle sensor
-
-        #use pwm on inputs so motors don't go too fast
-        GPIO.setup(L1, GPIO.OUT)
-        p = GPIO.PWM(L1, 20)
-        p.start(0)
-
-        GPIO.setup(L2, GPIO.OUT)
-        q = GPIO.PWM(L2, 20)
-        q.start(0)
-
-        GPIO.setup(R1, GPIO.OUT)
-        a = GPIO.PWM(R1, 20)
-        a.start(0)
-
-        GPIO.setup(R2, GPIO.OUT)
-        b = GPIO.PWM(R2, 20)
-        b.start(0)
         
-        GPIO.add_event_detect(ENCODER1, GPIO.RISING, callback=encoderCallbackR,bouncetime=2)
-        GPIO.add_event_detect(ENCODER2, GPIO.RISING, callback=encoderCallbackL,bouncetime=2)
+        #print GPIO.RPI_REVISION
+        
+        #use pwm on inputs so motors don't go too fast
+        GPIO.setup(self.L1, GPIO.OUT)
+        self.p = GPIO.PWM(self.L1, 20)
+        self.p.start(0)
+
+        GPIO.setup(self.L2, GPIO.OUT)
+        self.q = GPIO.PWM(self.L2, 20)
+        self.q.start(0)
+
+        GPIO.setup(self.R1, GPIO.OUT)
+        self.a = GPIO.PWM(self.R1, 20)
+        self.a.start(0)
+
+        GPIO.setup(self.R2, GPIO.OUT)
+        self.b = GPIO.PWM(self.R2, 20)
+        self.b.start(0)
+        
+        GPIO.add_event_detect(self.ENCODER1, GPIO.RISING, callback=self.encoderCallbackR,bouncetime=2)
+        GPIO.add_event_detect(self.ENCODER2, GPIO.RISING, callback=self.encoderCallbackL,bouncetime=2)
 
     # cleanup(). Sets all motors off and sets GPIO to standard values
-    def cleanup():
-        stop()
-        stopServos()
+    def cleanup(self):
+        self.stop()
         GPIO.cleanup()
 
     # version(). Returns 1. Invalid until after init() has been called
-    def version():
+    def version(self):
         return 1
 
     # End of General Functions
@@ -182,65 +175,65 @@ class Initio():
     # Motor Functions
     #
     # stop(): Stops both motors
-    def stop():
-        p.ChangeDutyCycle(0)
-        q.ChangeDutyCycle(0)
-        a.ChangeDutyCycle(0)
-        b.ChangeDutyCycle(0)
+    def stop(self):
+        self.p.ChangeDutyCycle(0)
+        self.q.ChangeDutyCycle(0)
+        self.a.ChangeDutyCycle(0)
+        self.b.ChangeDutyCycle(0)
         
     # forward(speed): Sets both motors to move forward at speed. 0 <= speed <= 100
-    def forward(speed):
-        p.ChangeDutyCycle(speed)
-        q.ChangeDutyCycle(0)
-        a.ChangeDutyCycle(speed)
-        b.ChangeDutyCycle(0)
-        p.ChangeFrequency(speed + 5)
-        a.ChangeFrequency(speed + 5)
+    def forward(self,speed):
+        self.p.ChangeDutyCycle(speed)
+        self.q.ChangeDutyCycle(0)
+        self.a.ChangeDutyCycle(speed)
+        self.b.ChangeDutyCycle(0)
+        self.p.ChangeFrequency(speed + 5)
+        self.a.ChangeFrequency(speed + 5)
         
     # reverse(speed): Sets both motors to reverse at speed. 0 <= speed <= 100
-    def reverse(speed):
-        p.ChangeDutyCycle(0)
-        q.ChangeDutyCycle(speed)
-        a.ChangeDutyCycle(0)
-        b.ChangeDutyCycle(speed)
-        q.ChangeFrequency(speed + 5)
-        b.ChangeFrequency(speed + 5)
+    def reverse(self,speed):
+        self.p.ChangeDutyCycle(0)
+        self.q.ChangeDutyCycle(speed)
+        self.a.ChangeDutyCycle(0)
+        self.b.ChangeDutyCycle(speed)
+        self.q.ChangeFrequency(speed + 5)
+        self.b.ChangeFrequency(speed + 5)
 
     # spinLeft(speed): Sets motors to turn opposite directions at speed. 0 <= speed <= 100
-    def spinLeft(speed):
-        p.ChangeDutyCycle(0)
-        q.ChangeDutyCycle(speed)
-        a.ChangeDutyCycle(speed)
-        b.ChangeDutyCycle(0)
-        q.ChangeFrequency(speed + 5)
-        a.ChangeFrequency(speed + 5)
+    def spinLeft(self,speed):
+        self.p.ChangeDutyCycle(0)
+        self.q.ChangeDutyCycle(speed)
+        self.a.ChangeDutyCycle(speed)
+        self.b.ChangeDutyCycle(0)
+        self.q.ChangeFrequency(speed + 5)
+        self.a.ChangeFrequency(speed + 5)
         
     # spinRight(speed): Sets motors to turn opposite directions at speed. 0 <= speed <= 100
-    def spinRight(speed):
-        p.ChangeDutyCycle(speed)
-        q.ChangeDutyCycle(0)
-        a.ChangeDutyCycle(0)
-        b.ChangeDutyCycle(speed)
-        p.ChangeFrequency(speed + 5)
-        b.ChangeFrequency(speed + 5)
+    def spinRight(self,speed):
+        self.p.ChangeDutyCycle(speed)
+        self.q.ChangeDutyCycle(0)
+        self.a.ChangeDutyCycle(0)
+        self.b.ChangeDutyCycle(speed)
+        self.p.ChangeFrequency(speed + 5)
+        self.b.ChangeFrequency(speed + 5)
         
     # turnForward(leftSpeed, rightSpeed): Moves forwards in an arc by setting different speeds. 0 <= leftSpeed,rightSpeed <= 100
-    def turnForward(leftSpeed, rightSpeed):
-        p.ChangeDutyCycle(leftSpeed)
-        q.ChangeDutyCycle(0)
-        a.ChangeDutyCycle(rightSpeed)
-        b.ChangeDutyCycle(0)
-        p.ChangeFrequency(leftSpeed + 5)
-        a.ChangeFrequency(rightSpeed + 5)
+    def turnForward(self,leftSpeed, rightSpeed):
+        self.p.ChangeDutyCycle(leftSpeed)
+        self.q.ChangeDutyCycle(0)
+        self.a.ChangeDutyCycle(rightSpeed)
+        self.b.ChangeDutyCycle(0)
+        self.p.ChangeFrequency(leftSpeed + 5)
+        self.a.ChangeFrequency(rightSpeed + 5)
         
     # turnReverse(leftSpeed, rightSpeed): Moves backwards in an arc by setting different speeds. 0 <= leftSpeed,rightSpeed <= 100
-    def turnReverse(leftSpeed, rightSpeed):
-        p.ChangeDutyCycle(0)
-        q.ChangeDutyCycle(leftSpeed)
-        a.ChangeDutyCycle(0)
-        b.ChangeDutyCycle(rightSpeed)
-        q.ChangeFrequency(leftSpeed + 5)
-        b.ChangeFrequency(rightSpeed + 5)
+    def turnReverse(self,leftSpeed, rightSpeed):
+        self.p.ChangeDutyCycle(0)
+        self.q.ChangeDutyCycle(leftSpeed)
+        self.a.ChangeDutyCycle(0)
+        self.b.ChangeDutyCycle(rightSpeed)
+        self.q.ChangeFrequency(leftSpeed + 5)
+        self.b.ChangeFrequency(rightSpeed + 5)
 
 # End of Motor Functions
 #======================================================================
@@ -249,16 +242,16 @@ class Initio():
 # Wheel Encoder functions
 #
 # stop(): Stops both motors
-    def encoderCallbackR(pin):
-        ticksR += 1
+    def encoderCallbackR(self,pin):
+        self.ticksR += 1
         
-    def encoderCallbackL(pin):
-        ticksL += 1
+    def encoderCallbackL(self,pin):
+        self.ticksL += 1
 
-    def getState():
-        stateR = self.wheelEncoderR.getState()
-        stateL = self.wheelEncoderL.getState()
-        return stateR, stateL
+    def getState(self):
+        self.stateR = self.wheelEncoderR.updateState(self.ticksR)
+        self.stateL = self.wheelEncoderL.updateState(self.ticksL)
+        return self.stateR, self.stateL
 
 
 

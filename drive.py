@@ -39,37 +39,42 @@ def readkey(getchar_fn=None):
 speed = 30
 
 initio = car.Initio()
+initio.init()
 
+start = time.time()
 # main loop
 try:
     while True:
+        if(time.time()-start>5):
+            print(initio.getState())
+            start = time.time()   
         keyp = readkey()
         if keyp == 'w' or ord(keyp) == 16:
             initio.forward(speed)
-            print 'Forward', speed
+            print ('Forward', speed)
         elif keyp == 'z' or ord(keyp) == 17:
             initio.reverse(speed)
-            print 'Reverse', speed
+            print ('Reverse', speed)
         elif keyp == 's' or ord(keyp) == 18:
             initio.spinRight(speed)
-            print 'Spin Right', speed
+            print ('Spin Right', speed)
         elif keyp == 'a' or ord(keyp) == 19:
             initio.spinLeft(speed)
-            print 'Spin Left', speed
+            print ('Spin Left', speed)
         elif keyp == '.' or keyp == '>':
             speed = min(100, speed+10)
-            print 'Speed+', speed
+            print ('Speed+', speed)
         elif keyp == ',' or keyp == '<':
             speed = max (0, speed-10)
-            print 'Speed-', speed
+            print ('Speed-', speed)
         elif keyp == ' ':
             initio.stop()
-            print 'Stop'
+            print ('Stop')
         elif ord(keyp) == 3:
             break
 
 except KeyboardInterrupt:
-    print
+    print ("ca marche pas")
 
 finally:
     initio.cleanup()
