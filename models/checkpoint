@@ -1,2 +1,0 @@
-model_checkpoint_path: "/data/sparks/user/apaladin/DeepPicar-v2/models/model-5conv_3fc-home_night.ckpt"
-all_model_checkpoint_paths: "/data/sparks/user/apaladin/DeepPicar-v2/models/model-5conv_3fc-home_night.ckpt"

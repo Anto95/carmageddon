@@ -55,10 +55,12 @@ try:
             initio.reverse(speed)
             print ('Reverse', speed)
         elif keyp == 's' or ord(keyp) == 18:
-            initio.spinRight(speed)
+            #initio.spinRight(speed)
+            initio.turnForward(speed,20)
             print ('Spin Right', speed)
         elif keyp == 'a' or ord(keyp) == 19:
-            initio.spinLeft(speed)
+            #initio.spinLeft(speed)
+            initio.turnForward(20, speed)
             print ('Spin Left', speed)
         elif keyp == '.' or keyp == '>':
             speed = min(100, speed+10)
