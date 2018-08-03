@@ -37,6 +37,7 @@
 # Import all necessary libraries
 import RPi.GPIO as GPIO, sys, threading, time, os, subprocess
 import math
+import logging
 
 #use physical pin numbering
 GPIO.setmode(GPIO.BOARD)
@@ -49,7 +50,7 @@ GPIO.setmode(GPIO.BOARD)
 #
 class WheelEncoder():
     def __init__(self):
-        self.radius = 55
+        self.radius = 5.5
         self.circum = self.radius * math.pi
         self.ticks = 0
         self.startTime = time.time()
@@ -94,7 +95,7 @@ class WheelEncoder():
         return self.getState()
     
     def getState(self):
-        self.state = {"elapsedTime":self.elapsedTime, "distance (m)":self.distance/100, "totalDistance (m)": self.totalDistance/100, "speed (m/s)": self.speed/100, "acceleration (m/s^2)":self.acceleration/100}
+        self.state = {"elapsedTime":self.elapsedTime, "distance (m)":self.distance/100, "totalDistance (m)": self.totalDistance/100, "speed (m/s)": self.speed/100, "acceleration (m/s^2)":self.acceleration/100, "revolutions": self.revolutions}
         return self.state
 
 class Initio():
@@ -134,7 +135,7 @@ class Initio():
         self.ightF = GPIO.PWM(self.L1,50)
         self.rightB = GPIO.PWM(self.L2,50)
         # Initialise the PWM device using the default address
-
+        
         
         #print GPIO.RPI_REVISION
         
@@ -157,7 +158,9 @@ class Initio():
         
         GPIO.add_event_detect(self.ENCODER1, GPIO.RISING, callback=self.encoderCallbackR,bouncetime=2)
         GPIO.add_event_detect(self.ENCODER2, GPIO.RISING, callback=self.encoderCallbackL,bouncetime=2)
-
+        
+        # create log file to save monitor informations
+        
     # cleanup(). Sets all motors off and sets GPIO to standard values
     def cleanup(self):
         self.stop()
@@ -249,10 +252,13 @@ class Initio():
         self.ticksL += 1
 
     def getState(self):
+        print(self.ticksR,self.ticksL)
         self.stateR = self.wheelEncoderR.updateState(self.ticksR)
         self.stateL = self.wheelEncoderL.updateState(self.ticksL)
+        self.ticksR = 0
+        self.ticksL = 0
         return self.stateR, self.stateL
-
+    
 
 
 

@@ -2,12 +2,16 @@
 # Version 1.0
 import car
 import time
+import threading
+import logging
 
 
 import sys
 import tty
 import termios
 
+running = True
+logging.basicConfig(filename="log.txt", level = logging.INFO)
 #======================================================================
 # Reading single character by forcing stdin to raw mode
 def readchar():
@@ -33,21 +37,21 @@ def readkey(getchar_fn=None):
     c3 = getchar()
     return chr(0x10 + ord(c3) - 65)  # 16=Up, 17=Down, 18=Right, 19=Left arrows
 
+
 # End of single character reading
 #======================================================================
 
-speed = 30
-
+speed = 100
 initio = car.Initio()
 initio.init()
-
 start = time.time()
 # main loop
 try:
     while True:
-        if(time.time()-start>5):
+        print(time.time()-start)
+        if(time.time()-start>1):
             print(initio.getState())
-            start = time.time()   
+            start = time.time()
         keyp = readkey()
         if keyp == 'w' or ord(keyp) == 16:
             initio.forward(speed)
@@ -74,9 +78,10 @@ try:
             break
 
 except KeyboardInterrupt:
-    print ("ca marche pas")
+    print ("terminated")
 
 finally:
     initio.cleanup()
+    running = False
 
 
