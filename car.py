@@ -108,19 +108,6 @@ class Initio():
         self.L1 = 13
         self.L2 = 15
 
-        #Pins Wheel encoder
-        self.ENCODER1 = 16 #Wheel Encoder right
-        self.ENCODER2 = 19 #Wheel Encoder left
-
-
-        #Setup wheel encoder
-        self.ticksR = 0
-        self.ticksL = 0
-        GPIO.setup(self.ENCODER1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        GPIO.setup(self.ENCODER2, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
-        self.wheelEncoderR = WheelEncoder()
-        self.wheelEncoderL = WheelEncoder()
-
         #Setup
         GPIO.setmode(GPIO.BOARD)
         GPIO.setup(self.R1, GPIO.OUT)
@@ -155,9 +142,6 @@ class Initio():
         GPIO.setup(self.R2, GPIO.OUT)
         self.b = GPIO.PWM(self.R2, 20)
         self.b.start(0)
-        
-        GPIO.add_event_detect(self.ENCODER1, GPIO.RISING, callback=self.encoderCallbackR,bouncetime=2)
-        GPIO.add_event_detect(self.ENCODER2, GPIO.RISING, callback=self.encoderCallbackL,bouncetime=2)
         
         # create log file to save monitor informations
         
@@ -242,22 +226,7 @@ class Initio():
 #======================================================================
 
 #======================================================================
-# Wheel Encoder functions
-#
-# stop(): Stops both motors
-    def encoderCallbackR(self,pin):
-        self.ticksR += 1
-        
-    def encoderCallbackL(self,pin):
-        self.ticksL += 1
 
-    def getState(self):
-        print(self.ticksR,self.ticksL)
-        self.stateR = self.wheelEncoderR.updateState(self.ticksR)
-        self.stateL = self.wheelEncoderL.updateState(self.ticksL)
-        self.ticksR = 0
-        self.ticksL = 0
-        return self.stateR, self.stateL
     
 
 

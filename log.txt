@@ -1,0 +1,15 @@
+INFO:root:{'revolutions': 0, 'elapsedTime': 1.0534579753875732, 'acceleration (m/s^2)': 0.0, 'distance (m)': 0.0, 'totalDistance (m)': 0.0, 'speed (m/s)': 0.0}
+INFO:root:{'revolutions': 0, 'elapsedTime': 1.0034680366516113, 'acceleration (m/s^2)': 0.0, 'distance (m)': 0.0, 'totalDistance (m)': 0.0, 'speed (m/s)': 0.0}
+INFO:root:{'revolutions': 0, 'elapsedTime': 1.0025060176849365, 'acceleration (m/s^2)': 0.0, 'distance (m)': 0.0, 'totalDistance (m)': 0.0, 'speed (m/s)': 0.0}
+INFO:root:{'revolutions': 0, 'elapsedTime': 1.0025241374969482, 'acceleration (m/s^2)': 0.0, 'distance (m)': 0.0, 'totalDistance (m)': 0.0, 'speed (m/s)': 0.0}
+INFO:root:{'revolutions': 0, 'elapsedTime': 1.0022759437561035, 'acceleration (m/s^2)': 0.0, 'distance (m)': 0.0, 'totalDistance (m)': 0.0, 'speed (m/s)': 0.0}
+INFO:root:{'revolutions': 2, 'elapsedTime': 1.0023069381713867, 'acceleration (m/s^2)': 0.34398625118593984, 'distance (m)': 0.34557519189487723, 'totalDistance (m)': 0.34557519189487723, 'speed (m/s)': 0.3447798061992329}
+INFO:root:{'revolutions': 2, 'elapsedTime': 1.002511978149414, 'acceleration (m/s^2)': -7.033981587962653e-05, 'distance (m)': 0.34557519189487723, 'totalDistance (m)': 0.6911503837897545, 'speed (m/s)': 0.34470928969127274}
+INFO:root:{'revolutions': 2, 'elapsedTime': 1.0025999546051025, 'acceleration (m/s^2)': -3.0169220406076337e-05, 'distance (m)': 0.34557519189487723, 'totalDistance (m)': 1.0367255756846316, 'speed (m/s)': 0.3446790420322631}
+INFO:root:{'revolutions': 2, 'elapsedTime': 1.0023891925811768, 'acceleration (m/s^2)': 7.22993655855298e-05, 'distance (m)': 0.34557519189487723, 'totalDistance (m)': 1.382300767579509, 'speed (m/s)': 0.3447515141349565}
+INFO:root:{'revolutions': 2, 'elapsedTime': 1.0026288032531738, 'acceleration (m/s^2)': -8.217353797696404e-05, 'distance (m)': 0.34557519189487723, 'totalDistance (m)': 1.727875959474386, 'speed (m/s)': 0.3446691245789156}
+INFO:root:{'revolutions': 2, 'elapsedTime': 1.0029890537261963, 'acceleration (m/s^2)': -0.00012342824509145836, 'distance (m)': 0.34557519189487723, 'totalDistance (m)': 2.0734511513692633, 'speed (m/s)': 0.34454532740016824}
+INFO:root:{'revolutions': 1, 'elapsedTime': 1.0030441284179688, 'acceleration (m/s^2)': -0.17175926550813403, 'distance (m)': 0.17278759594743862, 'totalDistance (m)': 2.246238747316702, 'speed (m/s)': 0.17226320463085146}
+INFO:root:{'revolutions': 0, 'elapsedTime': 1.0025689601898193, 'acceleration (m/s^2)': -0.17182180126366206, 'distance (m)': 0.0, 'totalDistance (m)': 2.246238747316702, 'speed (m/s)': 0.0}
+INFO:root:{'revolutions': 0, 'elapsedTime': 1.0023798942565918, 'acceleration (m/s^2)': 0.0, 'distance (m)': 0.0, 'totalDistance (m)': 2.246238747316702, 'speed (m/s)': 0.0}
+INFO:root:{'revolutions': 0, 'elapsedTime': 1.0024499893188477, 'acceleration (m/s^2)': 0.0, 'distance (m)': 0.0, 'totalDistance (m)': 2.246238747316702, 'speed (m/s)': 0.0}

@@ -44,14 +44,9 @@ def readkey(getchar_fn=None):
 speed = 100
 initio = car.Initio()
 initio.init()
-start = time.time()
 # main loop
 try:
     while True:
-        print(time.time()-start)
-        if(time.time()-start>1):
-            print(initio.getState())
-            start = time.time()
         keyp = readkey()
         if keyp == 'w' or ord(keyp) == 16:
             initio.forward(speed)
@@ -82,6 +77,4 @@ except KeyboardInterrupt:
 
 finally:
     initio.cleanup()
-    running = False
-
 

@@ -1,7 +1,8 @@
 import car
 import time
 import logging
-
+import RPi.GPIO as GPIO
+import math
 
 import sys
 import tty
@@ -58,10 +59,16 @@ class WheelEncoder():
     
 class Monitor():
     def init(self):
+        #Setup wheel encoder
         self.wheelEncoderInterval = 1
-        #Pins Wheel encoder 
         self.ENCODER1 = 16 #Wheel Encoder right
         self.ENCODER2 = 19 #Wheel Encoder left
+        self.ticksR = 0
+        self.ticksL = 0
+        GPIO.setup(self.ENCODER1, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        GPIO.setup(self.ENCODER2, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
+        self.wheelEncoderR = WheelEncoder()
+        self.wheelEncoderL = WheelEncoder()
         GPIO.add_event_detect(self.ENCODER1, GPIO.RISING, callback=self.encoderCallbackR,bouncetime=2)
         GPIO.add_event_detect(self.ENCODER2, GPIO.RISING, callback=self.encoderCallbackL,bouncetime=2)
         logging.basicConfig(filename='log.txt',level=logging.INFO)
@@ -79,9 +86,10 @@ class Monitor():
             self.stateL = self.wheelEncoderL.updateState(self.ticksL)
             self.ticksR = 0
             self.ticksL = 0
-            logging.info(stateR,stateL)
+            logging.info(self.stateR,self.stateL)
         
 monitor = Monitor()
+monitor.init()
 monitor.runWheelMonitor()
         
 
