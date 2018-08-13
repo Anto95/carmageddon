@@ -101,27 +101,26 @@ class WheelEncoder():
 class Initio():
     def init(self):
         #Pins
-        # Pins 24, 26 Right Motor
-        # Pins 19, 21 Left Motor
+        # Pins 11, 12 Right Motor
+        # Pins 13, 15 Left Motor
         self.R1 = 11
         self.R2 = 12
         self.L1 = 13
         self.L2 = 15
 
-        #Setup
-        GPIO.setmode(GPIO.BOARD)
-        GPIO.setup(self.R1, GPIO.OUT)
-        GPIO.setup(self.R2, GPIO.OUT)
-        GPIO.setup(self.L1, GPIO.OUT)
-        GPIO.setup(self.L2, GPIO.OUT)
+        # #Setup
+        # GPIO.setmode(GPIO.BOARD)
+        # GPIO.setup(self.R1, GPIO.OUT)
+        # GPIO.setup(self.R2, GPIO.OUT)
+        # GPIO.setup(self.L1, GPIO.OUT)
+        # GPIO.setup(self.L2, GPIO.OUT)
 
 
-        #Setup PWM
-        self.leftF = GPIO.PWM(self.R1,50)
-        self.leftB = GPIO.PWM(self.R2,50)
-        self.ightF = GPIO.PWM(self.L1,50)
-        self.rightB = GPIO.PWM(self.L2,50)
-        # Initialise the PWM device using the default address
+        # #Setup PWM
+        # self.leftF = GPIO.PWM(self.R1,50)
+        # self.leftB = GPIO.PWM(self.R2,50)
+        # self.ightF = GPIO.PWM(self.L1,50)
+        # self.rightB = GPIO.PWM(self.L2,50)
         
         
         #print GPIO.RPI_REVISION

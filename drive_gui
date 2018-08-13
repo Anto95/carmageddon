@@ -1,0 +1,16 @@
+from tkinter import *
+import car
+import time
+
+def sel(value):
+   selection = "Value = " + str(value)
+   label.config(text = selection)
+
+root = Tk()
+var = DoubleVar()
+scale = Scale( root, from_ = -100, variable = var, command = sel)
+scale.pack(anchor = CENTER)
+label = Label(root)
+label.pack()
+
+root.mainloop()
